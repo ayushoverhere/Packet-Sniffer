@@ -1,3 +1,4 @@
+# import required modules
 import sys
 from scapy.all import *
 from scapy.layers.http import HTTPRequest  # import HTTP packet
@@ -12,8 +13,8 @@ RED = Fore.RED
 RESET = Fore.RESET
 BLUE = Fore.BLUE
 
+# print banner
 ascii_banner = pyfiglet.figlet_format("Packet Sniffer!")
-
 print(ascii_banner)
 print(f''' {BLUE}                     https://github.com/ayushoverhere/Packet-Sniffer
 + -- --=[ packet sniffer v0.2-dev                                                                       ]
@@ -21,37 +22,44 @@ print(f''' {BLUE}                     https://github.com/ayushoverhere/Packet-Sn
 + -- --=[ records visited websites,and print POST raw data, such as passwords, search queries, etc      ]
 + -- --=[ coded by: Ayush, Naman, Tripti and Kuldeep                                                    ]
 ''')
+
 print("")
+
+# print menu
 print("Menu")
 print("1: Packet Filter")
 print("2: Record Visited Websites and Print POST Raw Data")
 print("3: Generate Fake Packets")
 print("4: Quit Program")
 
+# get user input
 ch = input("Enter your choice: ")
 
+# handle user input
 if ch == "1":
+    # get filter input from user
     val = input("Enter your filter: ")
-    # to print raw packet
+    # define callback function to print raw packet
     def packet_callback(packet):
         print(packet.show())
-    # to call for raw packet
+    # sniff packets and call packet_callback for each packet
     sniff(filter=val, prn=packet_callback, store=0)
 
 elif ch == "2":
+    # define function to sniff packets on port 80
     def sniff_packets(iface=None):
         """
         Sniff 80 port packets with `iface`, if None (default), then the
         Scapy's default interface is used
         """
         if iface:
-            # port 80 for http (generally)
-            # `process_packet` is the callback
+            # sniff with specified interface
             sniff(filter="port 80", prn=process_packet, iface=iface, store=False)
         else:
             # sniff with default interface
             sniff(filter="port 80", prn=process_packet, store=False)
 
+    # define function to process HTTP packets and print relevant information
     def process_packet(packet):
         """
         This function is executed whenever a packet is sniffed
@@ -72,6 +80,7 @@ elif ch == "2":
                 print(
                     f"\n{RED}[*] Some useful Raw data: {packet[Raw].load}{RESET}")
 
+    # start sniffing packets and processing them
     sniff_packets()
     
 if (ch == "3"):
@@ -93,4 +102,5 @@ if (ch == "3"):
     fake_packet.show()
 
 if (ch == "4"):
+    # Exit the program
     sys.exit("Aborting...")
